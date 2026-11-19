@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, MapPin, Star } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { cn } from "cn";
 import { formatBDT } from "@/lib/services";
 
 export default function ServiceCard({ service }) {
@@ -69,14 +70,16 @@ export default function ServiceCard({ service }) {
       </CardContent>
 
       <CardFooter className="border-t-0 bg-transparent p-5 pt-0">
-        <Button
-          variant="outline"
-          className="h-10 w-full rounded-full border-cream-300 text-espresso transition-colors hover:border-garnet/40 hover:bg-garnet/5 hover:text-garnet"
-          render={<Link href={`/services/${service.slug}`} />}
+        <Link
+          href={`/services/${service.slug}`}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-10 w-full rounded-full border-cream-300 text-espresso transition-colors hover:border-garnet/40 hover:bg-garnet/5 hover:text-garnet"
+          )}
         >
           View Details
           <ArrowRight className="size-4" aria-hidden="true" />
-        </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

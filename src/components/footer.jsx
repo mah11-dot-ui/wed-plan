@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Clock,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import Logo from "@/components/logo";
 
 // Feather-style (MIT) brand glyphs — stroke-based, consistent with lucide
@@ -137,21 +143,18 @@ export default function Footer() {
             <ul className="flex items-center gap-1.5" aria-label="Social media">
               {socialLinks.map(({ href, label, icon: Icon }) => (
                 <li key={label}>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="rounded-full text-espresso/70 hover:bg-garnet/5 hover:text-garnet"
-                    render={
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`WedPlan on ${label}`}
-                      />
-                    }
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={`WedPlan on ${label}`}
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "icon-sm" }),
+                      "rounded-full text-espresso/70 hover:bg-garnet/5 hover:text-garnet"
+                    )}
                   >
                     <Icon aria-hidden="true" />
-                  </Button>
+                  </a>
                 </li>
               ))}
             </ul>

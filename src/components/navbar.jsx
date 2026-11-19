@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import Logo from "@/components/logo";
 import MobileNav from "@/components/mobile-nav";
 import ThemeToggle from "@/components/theme-toggle";
@@ -30,31 +31,38 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-1 lg:flex">
           {exploreLinks.map(({ href, label }) => (
-            <Button
+            <Link
               key={href}
-              variant="ghost"
-              className="h-10 rounded-full px-5 text-[15px] font-medium text-espresso hover:bg-garnet/5 hover:text-garnet"
-              render={<Link href={href} />}
+              href={href}
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "h-10 rounded-full px-5 text-[15px] font-medium text-espresso hover:bg-garnet/5 hover:text-garnet"
+              )}
             >
               {label}
-            </Button>
+            </Link>
           ))}
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="hidden h-10 rounded-full px-5 font-medium text-espresso hover:bg-garnet/5 hover:text-garnet sm:inline-flex"
-            render={<Link href="/sign-in" />}
+          <Link
+            href="/sign-in"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "hidden h-10 rounded-full px-5 font-medium text-espresso hover:bg-garnet/5 hover:text-garnet sm:inline-flex"
+            )}
           >
             Sign In
-          </Button>
-          <Button
-            className="h-9 rounded-full bg-garnet px-4 font-medium text-garnet-foreground hover:bg-garnet-deep sm:h-10 sm:px-6"
-            render={<Link href="/sign-up" />}
+          </Link>
+          <Link
+            href="/sign-up"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "h-9 rounded-full bg-garnet px-4 font-medium text-garnet-foreground hover:bg-garnet-deep sm:h-10 sm:px-6"
+            )}
           >
             Sign Up
-          </Button>
+          </Link>
           <ThemeToggle className="size-10" />
         </div>
       </nav>

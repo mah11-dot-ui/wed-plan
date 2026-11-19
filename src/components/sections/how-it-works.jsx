@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, ClipboardList, PartyPopper, SlidersHorizontal } from "lucide-react";
 
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import Reveal from "@/components/reveal";
 import SectionHeading from "@/components/section-heading";
-import { Button } from "@/components/ui/button";
 
 const steps = [
   {
@@ -64,17 +65,19 @@ export default function HowItWorks() {
         </ol>
 
         <div className="mt-12 flex justify-center">
-          <Button
-            size="lg"
-            className="group h-12 rounded-full bg-garnet px-7 text-[15px] font-semibold text-garnet-foreground hover:bg-garnet-deep"
-            render={<Link href="/sign-up" />}
+          <Link
+            href="/sign-up"
+            className={cn(
+              buttonVariants({ variant: "default", size: "lg" }),
+              "group h-12 rounded-full bg-garnet px-7 text-[15px] font-semibold text-garnet-foreground hover:bg-garnet-deep"
+            )}
           >
             Start Planning — It&apos;s Free
             <ArrowRight
               className="size-4 transition-transform duration-300 group-hover:translate-x-1"
               aria-hidden="true"
             />
-          </Button>
+          </Link>
         </div>
       </div>
     </section>

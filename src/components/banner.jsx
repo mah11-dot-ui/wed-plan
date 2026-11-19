@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowRight, Sparkles, Star } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -99,17 +100,19 @@ export default function Banner() {
               whileTap={reduce ? undefined : { scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 18 }}
             >
-              <Button
-                size="lg"
-                className="group h-12 rounded-full bg-garnet px-7 text-[15px] font-semibold text-garnet-foreground hover:bg-garnet-deep"
-                render={<Link href="/services" />}
-              >
-                Explore Wedding Services
-                <ArrowRight
-                  className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </Button>
+            <Link
+              href="/services"
+              className={cn(
+                buttonVariants({ variant: "default", size: "lg" }),
+                "group h-12 rounded-full bg-garnet px-7 text-[15px] font-semibold text-garnet-foreground hover:bg-garnet-deep"
+              )}
+            >
+              Explore Wedding Services
+              <ArrowRight
+                className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden="true"
+              />
+            </Link>
             </motion.div>
           </motion.div>
 

@@ -126,16 +126,43 @@ export async function getFeaturedServices(limit = 6) {
   }
 }
 
-export async function getServices(category) {
+export async function getServices({ search = "", category = "all", location = "all" } = {}) {
   await io();
-  const query = category ? `?category=${encodeURIComponent(category)}` : "";
+  const params = new URLSearchParams();
+  if (search) params.set("search", search);
+  if (category && category !== "all") params.set("category", category);
+  if (location && location !== "all") params.set("location", location);
+  const query = params.toString();
+
   try {
-    return await serverFetch(`/services${query}`);
+    return await serverFetch(`/services${query ? `?${query}` : ""}`);
   } catch (error) {
     console.warn(
       `[wed-plan] Could not reach wed-plan-server (${API_URL}) — using offline seed.`,
       error
     );
-    return offlineSeed.filter((service) => !category || service.categorySlug === category);
+    const needle = search.trim().toLowerCase();
+    return offlineSeed.filter((service) => {
+      const matchesSearch =
+        !needle || service.name.toLowerCase().includes(needle);
+      const matchesCategory =
+        category === "all" || service.categorySlug === category;
+      const matchesLocation =
+        location === "all" || service.location === location;
+      return matchesSearch && matchesCategory && matchesLocation;
+    });
+  }
+}
+
+export async function getServiceLocations() {
+  await io();
+  try {
+    return await serverFetch(`/services/locations`);
+  } catch (error) {
+    console.warn(
+      `[wed-plan] Could not reach wed-plan-server (${API_URL}) — deriving locations from offline seed.`,
+      error
+    );
+    return [...new Set(offlineSeed.map((service) => service.location))].sort();
   }
 }
