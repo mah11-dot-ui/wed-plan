@@ -13,6 +13,7 @@ export default function ServicesFilters({
   search = "",
   category = "all",
   location = "all",
+  sort = "",
   categories = [],
   locations = [],
 }) {
@@ -68,6 +69,18 @@ export default function ServicesFilters({
             {item}
           </NativeSelectOption>
         ))}
+      </NativeSelect>
+
+      <NativeSelect
+        id="sort"
+        name="sort"
+        defaultValue={sort}
+        aria-label="Sort services"
+        className="w-full md:w-52"
+      >
+        <NativeSelectOption value="">Recommended</NativeSelectOption>
+        <NativeSelectOption value="price_asc">Price: Low to High</NativeSelectOption>
+        <NativeSelectOption value="price_desc">Price: High to Low</NativeSelectOption>
       </NativeSelect>
 
       <div className="flex items-center gap-2">

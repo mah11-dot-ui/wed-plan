@@ -16,6 +16,7 @@ export default async function ServicesCatalogue({ searchParams }) {
   const search = firstParam(params?.search)?.trim() ?? "";
   const category = firstParam(params?.category) ?? "all";
   const location = firstParam(params?.location) ?? "all";
+  const sort = firstParam(params?.sort) ?? "";
 
   const [categories, locations] = await Promise.all([
     getCategories(),
@@ -28,6 +29,7 @@ export default async function ServicesCatalogue({ searchParams }) {
         search={search}
         category={category}
         location={location}
+        sort={sort}
         categories={categories}
         locations={locations}
       />
@@ -36,6 +38,7 @@ export default async function ServicesCatalogue({ searchParams }) {
           search={search}
           category={category}
           location={location}
+          sort={sort}
         />
       </div>
     </>

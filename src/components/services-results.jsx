@@ -10,8 +10,9 @@ export default async function ServicesResults({
   search = "",
   category = "all",
   location = "all",
+  sort = "",
 }) {
-  const services = await getServices({ search, category, location });
+  const services = await getServices({ search, category, location, sort });
 
   if (services.length === 0) {
     return (

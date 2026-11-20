@@ -1,6 +1,7 @@
 import { Inter, Geist_Mono, Lora } from "next/font/google";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
+import { ToastProvider } from "@/components/toast-provider";
 import "./globals.css";
 
 // Applies the stored (or system) theme before paint — prevents a flash of
@@ -38,10 +39,12 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <Navbar />
-        <div aria-hidden="true" className="h-[67px] shrink-0" />
-        {children}
-        <Footer />
+        <ToastProvider>
+          <Navbar />
+          <div aria-hidden="true" className="h-[67px] shrink-0" />
+          {children}
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

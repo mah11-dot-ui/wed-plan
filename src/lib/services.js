@@ -126,12 +126,18 @@ export async function getFeaturedServices(limit = 6) {
   }
 }
 
-export async function getServices({ search = "", category = "all", location = "all" } = {}) {
+export async function getServices({
+  search = "",
+  category = "all",
+  location = "all",
+  sort = "",
+} = {}) {
   await io();
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   if (category && category !== "all") params.set("category", category);
   if (location && location !== "all") params.set("location", location);
+  if (sort) params.set("sort", sort);
   const query = params.toString();
 
   try {
@@ -142,15 +148,31 @@ export async function getServices({ search = "", category = "all", location = "a
       error
     );
     const needle = search.trim().toLowerCase();
-    return offlineSeed.filter((service) => {
-      const matchesSearch =
-        !needle || service.name.toLowerCase().includes(needle);
-      const matchesCategory =
-        category === "all" || service.categorySlug === category;
-      const matchesLocation =
-        location === "all" || service.location === location;
-      return matchesSearch && matchesCategory && matchesLocation;
-    });
+    const filtered = offlineSeed.filter(
+      (service) =>
+        (!needle || service.name.toLowerCase().includes(needle)) &&
+        (category === "all" || service.categorySlug === category) &&
+        (location === "all" || service.location === location)
+    );
+    if (sort === "price_asc") filtered.sort((a, b) => a.priceFrom - b.priceFrom);
+    if (sort === "price_desc") filtered.sort((a, b) => b.priceFrom - a.priceFrom);
+    return filtered;
+  }
+}
+
+export async function getServiceBySlug(slug) {
+  await io();
+  try {
+    return await serverFetch(`/services/${encodeURIComponent(slug)}`);
+  } catch (error) {
+    if (String(error?.message ?? "").includes("404")) {
+      return null; // invalid (or unapproved/inactive) service id
+    }
+    console.warn(
+      `[wed-plan] Could not reach wed-plan-server (${API_URL}) — looking up offline seed.`,
+      error
+    );
+    return offlineSeed.find((service) => service.slug === slug) ?? null;
   }
 }
 
