@@ -6,6 +6,7 @@ import { Loader2, ShieldBan, ShieldCheck } from "lucide-react";
 
 import { cn } from "cn";
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 export default function AdminBlockButton({ userId, blocked, isSelf }) {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function AdminBlockButton({ userId, blocked, isSelf }) {
   const toggle = async () => {
     setBusy(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await apiFetch(`/api/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isBlocked: !blocked }),

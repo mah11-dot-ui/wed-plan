@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Crown, Loader2 } from "lucide-react";
 
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 export default function UpgradeButton() {
-  const router = useRouter();
   const { success, error: toastError } = useToast();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -16,7 +15,7 @@ export default function UpgradeButton() {
     setBusy(true);
     setMessage("");
     try {
-      const response = await fetch("/api/subscription/upgrade", { method: "POST" });
+      const response = await apiFetch("/api/subscription/checkout", { method: "POST" });
       const data = await response.json();
       if (!response.ok) {
         setMessage(data?.message ?? "Upgrade failed. Please try again.");
@@ -24,10 +23,8 @@ export default function UpgradeButton() {
         setBusy(false);
         return;
       }
-      setMessage(data.message);
-      success(data.message);
-      router.refresh();
-      setBusy(false);
+      success("Opening secure Stripe checkout…");
+      window.location.href = data.url;
     } catch {
       setMessage("Network error — please try again.");
       toastError("Network error — please try again.");
@@ -46,7 +43,7 @@ export default function UpgradeButton() {
         {busy ? (
           <>
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            Upgrading…
+            Opening checkout…
           </>
         ) : (
           <>
@@ -55,7 +52,11 @@ export default function UpgradeButton() {
           </>
         )}
       </button>
-      {message && <p role="status" className="text-center text-[11px] font-medium text-emerald-600 dark:text-emerald-400">{message}</p>}
+      {message && (
+        <p role="status" className="text-center text-[11px] font-medium text-espresso/70">
+          {message}
+        </p>
+      )}
     </div>
   );
 }

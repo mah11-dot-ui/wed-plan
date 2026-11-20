@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, Check, Loader2, MapPin, X } from "lucide-react";
 
 import { cn } from "cn";
+import { apiFetch } from "@/lib/api-client";
 
 const statusStyles = {
   pending: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -21,7 +22,7 @@ export default function BookingActions({ bookings }) {
     setError("");
     setBusyId(id);
     try {
-      const response = await fetch(`/api/vendor/bookings/${id}`, {
+      const response = await apiFetch(`/api/bookings/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),

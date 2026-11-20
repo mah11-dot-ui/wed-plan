@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImagePlus, Loader2 } from "lucide-react";
 
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 const categories = [
   { slug: "photography", name: "Photography & Videography" },
@@ -26,8 +27,10 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
   const [description, setDescription] = useState(initial?.description ?? "");
   const [price, setPrice] = useState(initial?.price?.toString() ?? "");
   const [location, setLocation] = useState(initial?.location ?? "");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(initial?.serviceImage ?? null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [previews, setPreviews] = useState(
+    initial?.images?.length ? initial.images : initial?.serviceImage ? [initial.serviceImage] : []
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
@@ -35,19 +38,19 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
   const isEdit = Boolean(serviceId);
 
   const handleImage = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file.");
+    const files = Array.from(event.target.files ?? []);
+    if (!files.length) return;
+    const valid = files.filter((file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024);
+    if (valid.length !== files.length) {
+      setError("Only image files under 5 MB are accepted.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be smaller than 5 MB.");
-      return;
-    }
-    setError("");
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    const slots = Math.max(0, 5 - previews.length);
+    const accepted = valid.slice(0, slots);
+    if (accepted.length < valid.length) setError("You can upload up to 5 images.");
+    else setError("");
+    setImageFiles((current) => [...current, ...accepted]);
+    setPreviews((current) => [...current, ...accepted.map((file) => URL.createObjectURL(file))]);
   };
 
   const uploadToImgBB = async (file) => {
@@ -77,7 +80,7 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
     if (description.trim().length < 10) localErrors.description = "At least 10 characters.";
     if (!price || Number(price) <= 0) localErrors.price = "Enter a price above zero.";
     if (location.trim().length < 2) localErrors.location = "Enter a location.";
-    if (!imagePreview) localErrors.serviceImage = "Upload a service image.";
+    if (previews.length === 0) localErrors.serviceImage = "Upload at least one service image.";
     if (Object.keys(localErrors).length > 0) {
       setFieldErrors(localErrors);
       setError("Please fix the highlighted fields.");
@@ -87,7 +90,9 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
 
     setSubmitting(true);
     try {
-      const serviceImage = imageFile ? await uploadToImgBB(imageFile) : imagePreview;
+      const images = [];
+      for (const file of imageFiles) images.push(await uploadToImgBB(file));
+      const finalImages = images.length ? images : previews;
       const payload = {
         serviceName: serviceName.trim(),
         category: selected.name,
@@ -95,11 +100,12 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
         description: description.trim(),
         price: Number(price),
         location: location.trim(),
-        serviceImage,
+        images: finalImages,
+        serviceImage: finalImages[0],
       };
 
-      const response = await fetch(
-        isEdit ? `/api/vendor/services/${serviceId}` : "/api/vendor/services",
+      const response = await apiFetch(
+        isEdit ? `/api/services/${serviceId}` : "/api/services",
         {
           method: isEdit ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -222,13 +228,17 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
         <label htmlFor="svc-image" className="text-[11px] font-semibold uppercase tracking-wide text-espresso/60">
           Service Image
         </label>
-        <div className="flex items-center gap-4">
-          <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl border border-dashed border-cream-300 bg-cream-200">
-            {imagePreview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={imagePreview} alt="Service preview" className="size-full object-cover" />
+        <div className="flex flex-wrap items-start gap-4">
+          <div className="flex flex-wrap gap-2">
+            {previews.length === 0 ? (
+              <span className="grid size-20 place-items-center rounded-2xl border border-dashed border-cream-300 bg-cream-200">
+                <ImagePlus className="size-6 text-espresso/40" aria-hidden="true" />
+              </span>
             ) : (
-              <ImagePlus className="size-6 text-espresso/40" aria-hidden="true" />
+              previews.map((src, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={i} src={src} alt={`Service preview ${i + 1}`} className="size-20 rounded-2xl object-cover" />
+              ))
             )}
           </div>
           <div>
@@ -237,17 +247,18 @@ export default function ServiceForm({ initial = null, serviceId = null }) {
               className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-cream-300 bg-background px-4 text-xs font-semibold text-espresso transition-colors hover:border-garnet/40 hover:text-garnet"
             >
               <ImagePlus className="size-4" aria-hidden="true" />
-              {imageFile ? "Change image" : "Upload image"}
+              {previews.length ? "Add more photos" : "Upload images"}
             </label>
             <input
               id="svc-image"
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImage}
               className="sr-only"
             />
             <p className="mt-1.5 text-[10px] text-espresso/50">
-              {imageFile ? imageFile.name : "JPG, PNG or GIF — max 5 MB (stored on ImgBB)"}
+              {previews.length}/5 images · JPG, PNG or GIF · max 5 MB each (ImgBB)
             </p>
           </div>
         </div>

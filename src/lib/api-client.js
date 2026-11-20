@@ -11,7 +11,9 @@ async function getToken() {
   if (!response.ok) throw new Error("Please sign in to continue.");
 
   const { token } = await response.json();
-  const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+  const encoded = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  const padded = encoded + "=".repeat((4 - (encoded.length % 4)) % 4);
+  const payload = JSON.parse(atob(padded));
   cached = { token, expiresAt: payload.exp * 1000 - 30_000 };
   return token;
 }

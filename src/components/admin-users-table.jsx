@@ -7,6 +7,7 @@ import { Loader2, Search, ShieldBan, ShieldCheck } from "lucide-react";
 
 import { cn } from "cn";
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 export default function AdminUsersTable({ users }) {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function AdminUsersTable({ users }) {
   const toggleBlock = async (id, isBlocked) => {
     setBusyId(id);
     try {
-      const response = await fetch(`/api/admin/users/${id}`, {
+      const response = await apiFetch(`/api/users/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isBlocked: !isBlocked }),

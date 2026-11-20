@@ -7,6 +7,7 @@ import { Loader2, Pencil, Power, Trash2 } from "lucide-react";
 
 import { cn } from "cn";
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 const statusStyles = {
   pending: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -25,7 +26,7 @@ export default function VendorServiceList({ services }) {
     setError("");
     setBusyId(`${id}-${action}`);
     try {
-      const response = await fetch(`/api/vendor/services/${id}`, {
+      const response = await apiFetch(`/api/services/${id}`, {
         method: action === "delete" ? "DELETE" : "PATCH",
         ...(action === "delete"
           ? {}

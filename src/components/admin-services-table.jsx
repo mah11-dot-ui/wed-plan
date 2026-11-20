@@ -6,6 +6,7 @@ import { Check, Loader2, Search, Trash2, X } from "lucide-react";
 
 import { cn } from "cn";
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 const styles = {
   pending: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -35,7 +36,7 @@ export default function AdminServicesTable({ services }) {
   const act = async (id, mode, nextStatus) => {
     setBusyId(`${id}-${mode}`);
     try {
-      const response = await fetch(`/api/admin/services/${id}`, {
+      const response = await apiFetch(`/api/services/${id}`, {
         method: mode === "delete" ? "DELETE" : "PATCH",
         ...(mode === "delete"
           ? {}

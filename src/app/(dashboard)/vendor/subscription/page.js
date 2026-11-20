@@ -24,8 +24,8 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "Coming soon",
-    note: "pricing to be announced",
+    price: "$9.99",
+    note: "one-time upgrade",
     current: false,
     highlight: true,
     features: [

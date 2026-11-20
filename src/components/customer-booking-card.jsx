@@ -13,6 +13,7 @@ import {
 
 import { cn } from "cn";
 import { useToast } from "@/components/toast-provider";
+import { apiFetch } from "@/lib/api-client";
 
 const statusStyles = {
   pending: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -30,7 +31,7 @@ export default function CustomerBookingCard({ booking }) {
   const cancel = async () => {
     setBusy(true);
     try {
-      const response = await fetch(`/api/bookings/${booking.id}`, { method: "PATCH" });
+      const response = await apiFetch(`/api/bookings/${booking.id}`, { method: "PATCH" });
       const data = await response.json();
       if (!response.ok) error(data?.message ?? "Could not cancel the booking.");
       else {

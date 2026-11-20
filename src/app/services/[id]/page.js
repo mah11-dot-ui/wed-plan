@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 
 import BookingPanel from "@/components/booking-panel";
+import ServiceGallery from "@/components/service-gallery";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "cn";
@@ -67,8 +67,6 @@ export default async function ServiceDetailPage({ params }) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
-
-  const gallery = [service.image];
 
   return (
     <main className="flex flex-1 flex-col bg-background">
@@ -130,36 +128,10 @@ export default async function ServiceDetailPage({ params }) {
       {/* Content */}
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-8">
         <div className="space-y-10 lg:col-span-2">
-          {/* Gallery */}
-          <section aria-labelledby="gallery">
-            <h2 id="gallery" className="sr-only">
-              Service photos
-            </h2>
-            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-cream-300">
-              <Image
-                src={service.image}
-                alt={`${service.name} — service photo`}
-                fill
-                priority
-                sizes="(min-width: 1024px) 66vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="relative h-16 w-24 overflow-hidden rounded-xl border-2 border-garnet">
-                <Image
-                  src={service.image}
-                  alt="Photo thumbnail"
-                  fill
-                  sizes="96px"
-                  className="object-cover"
-                />
-              </div>
-              <p className="text-xs text-espresso/55">
-                {gallery.length} photo shown — more available on request.
-              </p>
-            </div>
-          </section>
+          <ServiceGallery
+            images={service.images ?? (service.image ? [service.image] : [])}
+            name={service.name}
+          />
 
           {/* Description */}
           <section aria-labelledby="about">
