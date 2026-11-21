@@ -2,6 +2,9 @@ import { BadgeCheck, Check, Crown, Infinity } from "lucide-react";
 
 import AccessDenied from "@/components/access-denied";
 import UpgradeButton from "@/components/upgrade-button";
+import { ObjectId } from "mongodb";
+
+import { db } from "@/lib/db";
 import { requireRole } from "@/lib/require-auth";
 
 export const metadata = {
@@ -42,7 +45,10 @@ export default async function SubscriptionPage() {
   if (blocked) return <AccessDenied kind="blocked" />;
   if (forbidden) return <AccessDenied kind="forbidden" role="vendor" />;
 
-  const plan = user.plan ?? "free";
+  const fresh = ObjectId.isValid(user.id)
+    ? await db.collection("user").findOne({ _id: new ObjectId(user.id) })
+    : null;
+  const plan = fresh?.plan ?? user.plan ?? "free";
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Crown, Loader2 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -11,15 +11,22 @@ import { apiFetch } from "@/lib/api-client";
 
 function PaymentSuccess() {
   const params = useSearchParams();
+  const router = useRouter();
   const sessionId = params.get("session_id") ?? "";
   const [status, setStatus] = useState(() => (sessionId ? "checking" : "missing"));
 
   useEffect(() => {
     if (!sessionId) return;
-    apiFetch(`/api/subscription/session?session_id=${encodeURIComponent(sessionId)}`)
-      .then((res) => res.json())
-      .then((data) => setStatus(data.paymentStatus === "paid" ? "paid" : "pending"))
-      .catch(() => setStatus("unavailable"));
+    apiFetch('/api/subscription/verify', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId }),
+    })
+      .then(async (res) => ({ ok: res.ok, data: await res.json().catch(() => ({})) }))
+      .then((result) => {
+        setStatus(result.ok && result.data.activated ? 'paid' : 'pending');
+        router.refresh();
+      })
+      .catch(() => setStatus('unavailable'));
   }, [sessionId]);
 
   return (
@@ -37,9 +44,9 @@ function PaymentSuccess() {
             <Loader2 className="size-4 animate-spin" aria-hidden="true" /> Confirming your payment…
           </span>
         ) : status === "paid" ? (
-          "Your payment is confirmed. Premium access is activated by our secure payment webhook — refresh your subscription page to see your updated plan."
+          "Your payment is verified and Premium access is active. Open the subscription page to see your updated plan."
         ) : (
-          "Your payment is being verified. Premium access activates automatically once Stripe confirms the payment — no action needed from you."
+          "Your payment is being verified with Stripe. Premium activates automatically once confirmed — no action needed from you."
         )}
       </p>
       <Link
