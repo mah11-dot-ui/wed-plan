@@ -57,12 +57,6 @@ Stripe webhook endpoint: `POST /api/subscription/webhook`. For local testing for
 
 Deploy the Next.js client and the Express API separately. Set all environment variables in both hosting dashboards. Update `CLIENT_URL`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_API_URL` and `API_URL` to the live domains. Configure CORS, Stripe webhooks and Google OAuth redirect URLs for the live domain. Verify public routes, role dashboards, reloads, and a Stripe test checkout after deployment.
 
-## Links
-
-- Live site: _add your deployed URL_
-- Client repository: _add your client repo URL_
-- Server repository: _add your server repo URL_
-- Admin credentials for evaluation: _add the admin email/password you created directly in the database_
 
 ## Notes
 
