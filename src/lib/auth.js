@@ -21,6 +21,11 @@ export const auth = betterAuth({
     process.env.NODE_ENV === "production" && process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : process.env.BETTER_AUTH_URL,
+  trustedOrigins: [
+    process.env.BETTER_AUTH_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    process.env.CLIENT_URL,
+  ].filter(Boolean),
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
