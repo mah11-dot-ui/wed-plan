@@ -17,11 +17,13 @@ export const auth = betterAuth({
   // In production derive the URL from the request host when the configured
   // base URL points to an old deployment (or is missing). This keeps Google
   // OAuth callbacks in sync with whatever domain Vercel is serving.
-  // Prefer the configured production domain (stable custom/deployment URL).
-  // Fall back to the per-deployment Vercel host only when no base URL is set.
-  baseURL:
-    process.env.BETTER_AUTH_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
+  // Dynamic base URL: Google OAuth sets a state cookie on the domain the
+  // user is browsing. The callback must return to that SAME host — a fixed
+  // base URL pointing to another Vercel deployment causes state_not_found.
+  baseURL: {
+    allowedHosts: ["*.vercel.app", "localhost"],
+    fallback: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  },
   trustedOrigins: [
     process.env.BETTER_AUTH_URL,
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
