@@ -57,6 +57,16 @@ Stripe webhook endpoint: `POST /api/subscription/webhook`. For local testing for
 
 Deploy the Next.js client and the Express API separately. Set all environment variables in both hosting dashboards. Update `CLIENT_URL`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_API_URL` and `API_URL` to the live domains. Configure CORS, Stripe webhooks and Google OAuth redirect URLs for the live domain. Verify public routes, role dashboards, reloads, and a Stripe test checkout after deployment.
 
+## Links
+
+- Live site: `https://wed-plan-delta.vercel.app`
+- Client repository: https://github.com/mah11-dot-ui/wed-plan
+- Server repository: _add your server repo URL_
+- Admin dashboard: `admin@wedplan.com` / `WedPlan@Admin2026`
+- Vendor dashboard: `vendor@wedplan.com` / `Vendor@WedPlan2026`
+- Customer dashboard: `customer@wedplan.com` / `Customer@WedPlan2026`
+
+These accounts were created directly in the MongoDB `user` collection (admin role assigned out-of-band — public registration never grants admin). Useful for testing role-based redirects, booking flows and dashboards.
 
 ## Notes
 
