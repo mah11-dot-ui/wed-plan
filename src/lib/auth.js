@@ -14,7 +14,13 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
+  // In production derive the URL from the request host when the configured
+  // base URL points to an old deployment (or is missing). This keeps Google
+  // OAuth callbacks in sync with whatever domain Vercel is serving.
+  baseURL:
+    process.env.NODE_ENV === "production" && process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.BETTER_AUTH_URL,
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
