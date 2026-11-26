@@ -1,4 +1,4 @@
-# WedPlan — Wedding Planning Platform
+# WedPlan — Wedding Planning Platform!!
 
 WedPlan is a role-based wedding planning marketplace. Couples discover approved wedding vendors, send booking requests and track their status. Vendors publish services, manage incoming requests and upgrade to Premium for unlimited listings. Admins review services, manage users and monitor transactions.
 
